@@ -5,10 +5,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import modelo.facturacion.Comprobante;
 import modelo.mascotas.Mascota;
 import modelo.personas.Dueno;
 import modelo.personas.Veterinario;
 import modelo.servicios.Facturable;
+import modelo.servicios.Servicio;
 
 /**
  * Clínica veterinaria. Agrupa veterinarios (agregación) y crea y posee
@@ -119,6 +121,22 @@ public class Clinica {
                 throw new IllegalStateException("El consultorio ya está ocupado a esa hora");
             }
         }
+    }
+
+    /**
+     * Atiende una cita con el servicio realizado y la guarda en el
+     * historial clínico de la mascota.
+     */
+    public void atenderCita(Cita cita, Servicio servicio) {
+        cita.atender(servicio);
+        cita.getMascota().getHistorial().agregarCita(cita);
+    }
+
+    /**
+     * Genera el comprobante de una cita atendida.
+     */
+    public Comprobante generarComprobante(Cita cita) {
+        return new Comprobante(cita);
     }
 
     /**
