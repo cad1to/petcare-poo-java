@@ -1,0 +1,190 @@
+classDiagram
+    namespace modelo_personas {
+        class Persona {
+            <<abstract>>
+            -String nombre
+            -String apellido
+            -String telefono
+            -String correo
+            +Persona(String nombre, String apellido, String telefono, String correo)
+            +getNombreCompleto() String
+            +describir()* String
+            +toString() String
+        }
+        class Dueno {
+            -String direccion
+            +Dueno(String nombre, String apellido, String telefono, String correo, String direccion)
+            +getDireccion() String
+            +setDireccion(String direccion) void
+            +describir() String
+            +toString() String
+        }
+        class Veterinario {
+            -String cedulaProfesional
+            -String especialidad
+            +Veterinario(String nombre, String apellido, String telefono, String correo, String cedulaProfesional, String especialidad)
+            +getCedulaProfesional() String
+            +describir() String
+        }
+        class Recepcionista {
+            -String turno
+            +Recepcionista(String nombre, String apellido, String telefono, String correo, String turno)
+            +describir() String
+        }
+    }
+
+    namespace modelo_mascotas {
+        class Mascota {
+            <<abstract>>
+            -String nombre
+            -int edad
+            -double peso
+            -Dueno dueno
+            -HistorialClinico historial
+            +Mascota(String nombre, int edad, double peso, Dueno dueno)
+            +hacerSonido()* String
+            +setEdad(int edad) void
+            +setPeso(double peso) void
+            +getDueno() Dueno
+            +getHistorial() HistorialClinico
+            +toString() String
+        }
+        class Perro {
+            -String raza
+            -String nivelEnergia
+            +Perro()
+            +Perro(String nombre, int edad, double peso, Dueno dueno, String raza, String nivelEnergia)
+            +hacerSonido() String
+        }
+        class Gato {
+            -boolean esDomestico
+            +Gato(String nombre, int edad, double peso, Dueno dueno, boolean esDomestico)
+            +hacerSonido() String
+        }
+        class Ave {
+            -double longitudAlas
+            +Ave(String nombre, int edad, double peso, Dueno dueno, double longitudAlas)
+            +hacerSonido() String
+        }
+        class HistorialClinico {
+            -List~Cita~ citasAtendidas
+            +HistorialClinico()
+            +agregarCita(Cita cita) void
+            +listarCitas() List~Cita~
+        }
+    }
+
+    namespace modelo_servicios {
+        class Facturable {
+            <<interface>>
+            +calcularCosto() double
+        }
+        class Servicio {
+            <<abstract>>
+            -String descripcion
+            +Servicio(String descripcion)
+            +getDescripcion() String
+            +calcularCosto()* double
+        }
+        class ConsultaGeneral {
+            -double tarifaBase
+            +ConsultaGeneral(String descripcion, double tarifaBase)
+            +setTarifaBase(double tarifaBase) void
+            +calcularCosto() double
+        }
+        class Vacunacion {
+            -double tarifaBase
+            -double costoVacuna
+            +Vacunacion(String descripcion, double tarifaBase, double costoVacuna)
+            +setCostoVacuna(double costoVacuna) void
+            +calcularCosto() double
+        }
+        class Cirugia {
+            -String complejidad
+            -double horasQuirofano
+            +Cirugia(String descripcion, String complejidad, double horasQuirofano)
+            +calcularCosto() double
+        }
+    }
+
+    namespace modelo_facturacion {
+        class Comprobante {
+            -int contadorFolios$
+            -int folio
+            -double total
+            -Cita cita
+            +Comprobante(Cita cita)
+            +getTotal() double
+            +imprimir() void
+        }
+    }
+
+    namespace modelo_clinica {
+        class Clinica {
+            -String nombre
+            -List~Veterinario~ veterinarios
+            -List~Consultorio~ consultorios
+            -List~Cita~ citas
+            -List~Mascota~ mascotas
+            -List~Dueno~ duenos
+            -List~Comprobante~ comprobantes
+            +Clinica(String nombre, int cantidadConsultorios)
+            +agregarVeterinario(Veterinario veterinario) void
+            +registrarDueno(Dueno dueno) void
+            +registrarMascota(Mascota mascota) void
+            +agendarCita(Mascota mascota, Veterinario veterinario, Consultorio consultorio, LocalDateTime fechaHora) Cita
+            +buscarCita(String nombreMascota) List~Cita~
+            +buscarCita(LocalDate fecha) List~Cita~
+            +darDeBajaMascota(Mascota mascota) void
+            +totalCobradoPorVeterinario(Veterinario veterinario) double
+            +totalCobradoPorMascota(Mascota mascota) double
+        }
+        class Consultorio {
+            -int numero
+            +Consultorio(int numero)
+            +getNumero() int
+            +toString() String
+        }
+        class Cita {
+            -LocalDateTime fechaHora
+            -EstadoCita estado
+            -Mascota mascota
+            -Veterinario veterinario
+            -Consultorio consultorio
+            -Servicio servicio
+            +Cita(LocalDateTime fechaHora, Mascota mascota, Veterinario veterinario, Consultorio consultorio)
+            +atender(Servicio servicio) void
+            +cancelar() void
+            +generarComprobante() Comprobante
+            +getEstado() EstadoCita
+            +toString() String
+        }
+        class EstadoCita {
+            <<enumeration>>
+            PROGRAMADA
+            ATENDIDA
+            CANCELADA
+        }
+    }
+
+    Persona <|-- Dueno
+    Persona <|-- Veterinario
+    Persona <|-- Recepcionista
+    Mascota <|-- Perro
+    Mascota <|-- Gato
+    Mascota <|-- Ave
+    Servicio <|-- ConsultaGeneral
+    Servicio <|-- Vacunacion
+    Servicio <|-- Cirugia
+    Facturable <|.. Servicio
+
+Clinica "1" o-- "0..*" Veterinario : veterinarios
+Clinica "1" *-- "1..*" Consultorio : consultorios
+Mascota "1" *-- "1" HistorialClinico : historial
+Mascota "0..*" --> "1" Dueno : dueno
+Cita "0..*" --> "1" Mascota : mascota
+Cita "0..*" --> "1" Veterinario : veterinario
+Cita "0..*" --> "1" Consultorio : consultorio
+Cita "0..*" --> "0..1" Servicio : servicio
+Cita --> EstadoCita : estado
+Comprobante "0..*" --> "1" Cita : cita
