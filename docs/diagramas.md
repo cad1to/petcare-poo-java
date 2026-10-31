@@ -1,1 +1,0 @@
-![diagramaclase_petcare.png](diagramaclase_petcare.png)
