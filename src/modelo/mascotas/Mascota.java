@@ -4,12 +4,14 @@ import modelo.personas.Dueno;
 
 /**
  * Clase abstracta con los datos y comportamientos comunes de las mascotas.
+ * Crea y posee su historial clínico (composición).
  */
 public abstract class Mascota {
     private String nombre;
     private int edad;
     private double peso;
     private Dueno dueno;
+    private final HistorialClinico historial = new HistorialClinico();
 
     /**
      * Crea una mascota validando sus datos.
@@ -68,6 +70,10 @@ public abstract class Mascota {
             throw new IllegalArgumentException("La mascota debe tener un dueño");
         }
         this.dueno = dueno;
+    }
+
+    public HistorialClinico getHistorial() {
+        return historial;
     }
 
     @Override
