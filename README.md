@@ -72,7 +72,6 @@ petcare-poo-java/
 ├── .gitignore
 ├── docs/
 │   ├── analisis.md
-│   ├── ejemplo-ejecucion.md
 │   ├── diagramas/
 │   └── capturas/
 └── src/
@@ -97,28 +96,26 @@ petcare-poo-java/
 
 ## Conceptos aplicados
 
-Completa la columna de línea abriendo cada archivo en IntelliJ.
-
-| Concepto | Archivo | Línea |
+| Concepto | Archivo | Cómo se aplica |
 | --- | --- | --- |
-| Clase abstracta | `Persona.java`, `Mascota.java`, `Servicio.java` | |
-| Método abstracto | `Persona.describir()`, `Mascota.hacerSonido()` | |
-| Herencia y `super(...)` | `Dueno.java`, `Veterinario.java`, `Perro.java`, `Gato.java`, `Ave.java` | |
-| Interfaz | `Facturable.java` (implementada por `Servicio`) | |
-| Polimorfismo con mascotas | `Main.listarMascotas()` | |
-| Polimorfismo con servicios | `Clinica.sumarCostos()` | |
-| Sobrecarga de métodos | `Clinica.buscarCitas(String)` y `buscarCitas(LocalDate)` | |
-| Sobrecarga de constructores | `Clinica()` y `Clinica(String, int)` | |
-| Sobreescritura (`@Override`) | `toString()`, `describir()`, `hacerSonido()`, `calcularCosto()` | |
-| Asociación | `Cita.java` | |
-| Agregación | `Clinica.agregarVeterinario()` | |
-| Composición | `Clinica` (constructor, consultorios) y `Mascota` (historial) | |
-| Miembro `static` | `Comprobante.comprobantesGenerados` | |
-| Constantes | `ConsultaGeneral.TARIFA_BASE`, `Cirugia.TARIFA_HORA_QUIROFANO` | |
-| Encapsulamiento y validación | setters de `Mascota`, `Persona` | |
-| `protected` | `Persona.validarTexto()` | |
-| Acceso de paquete | constructor de `Consultorio` y de `HistorialClinico` | |
-| Eliminación de objetos y recolector de basura | `Clinica.darDeBajaMascota()` | |
+| Clase abstracta | `Persona.java`, `Mascota.java`, `Servicio.java` | Agrupan lo común y no se pueden instanciar |
+| Método abstracto | `Persona.describir()`, `Mascota.hacerSonido()` | Cada clase hija lo implementa a su manera |
+| Herencia y `super(...)` | `Dueno.java`, `Veterinario.java`, `Recepcionista.java`, `Perro.java`, `Gato.java`, `Ave.java` | Las hijas llaman a `super(...)` para inicializar los datos del padre |
+| Interfaz | `Facturable.java` | Implementada por `Servicio` y, a través de ella, por los tres servicios |
+| Polimorfismo con mascotas | `Main.listarMascotas()` | Una `List<Mascota>` llama a `hacerSonido()` sin `instanceof` |
+| Polimorfismo con servicios | `Clinica.sumarCostos()` | Una `List<Facturable>` suma `calcularCosto()` sin `instanceof` |
+| Sobrecarga de métodos | `Clinica.buscarCitas(String)` y `buscarCitas(LocalDate)` | Mismo nombre, parámetros distintos |
+| Sobrecarga de constructores | `Clinica()` y `Clinica(String, int)` | Uno por defecto y otro con todos los datos |
+| Sobreescritura (`@Override`) | `toString()`, `describir()`, `hacerSonido()`, `calcularCosto()` | Las hijas redefinen el comportamiento del padre o de la interfaz |
+| Asociación | `Cita.java` | Referencia a `Mascota`, `Veterinario` y `Consultorio`, que existen por sí solos |
+| Agregación | `Clinica.agregarVeterinario()` | La clínica recibe veterinarios ya creados |
+| Composición | `Clinica` (consultorios) y `Mascota` (historial) | El contenedor crea sus partes con `new` y las posee |
+| Miembro `static` | `Comprobante.comprobantesGenerados` | Contador compartido que da el folio de cada comprobante |
+| Constantes | `ConsultaGeneral.TARIFA_BASE`, `Cirugia.TARIFA_HORA_QUIROFANO` | `static final` en mayúsculas |
+| Encapsulamiento y validación | Setters de `Mascota` y `Persona` | Atributos privados y setters que lanzan `IllegalArgumentException` |
+| `protected` | `Persona.validarTexto()` | Solo las clases hijas lo reutilizan |
+| Acceso de paquete | Constructores de `Consultorio` y `HistorialClinico` | Solo `Clinica` y `Mascota` pueden crearlos |
+| Eliminación de objetos | `Clinica.darDeBajaMascota()` | Al quitar las referencias, el recolector de basura libera la memoria |
 
 ### Niveles de acceso
 
@@ -150,7 +147,8 @@ El escenario completo, con todas sus salidas, está en
 [docs/ejemplo-ejecucion.md](docs/ejemplo-ejecucion.md). Las capturas están en
 [docs/capturas/](docs/capturas/).
 
-Fragmento de la carga del escenario (opción 11):
+Fragmento de la carga del escenario (opción 11), que registra dueños, mascotas y
+veterinarios, agenda tres citas, muestra una regla de negocio violada y atiende dos citas:
 
 ```text
 Dueños, mascotas y veterinarios registrados.
@@ -162,7 +160,8 @@ Regla de negocio violada: El veterinario ya tiene una cita a esa hora
 Atendidas las citas 1 (cirugía) y 2 (vacunación).
 ```
 
-Polimorfismo (opción 7) y total cobrado (opción 8):
+Después de atender también la cita 3 con consulta general (opción 4), el polimorfismo
+(opción 7) y el total cobrado (opción 8) se ven así:
 
 ```text
 Rocky dice: Guau
@@ -192,13 +191,28 @@ atrapan en un solo `try/catch` dentro del ciclo del menú.
 
 ## Reflexión
 
-> **Esta sección la escribes tú.** Responde con tus palabras y con honestidad:
->
-> - ¿Qué aprendiste? (por ejemplo, la diferencia entre agregación y composición, o por qué
-    >   `Mascota` es abstracta)
-> - ¿Qué fue lo más difícil?
-> - ¿Qué mejorarías? (por ejemplo, guardar datos en archivos o evitar comprobantes duplicados)
-> - ¿Cómo usaste la IA? Indica para qué la usaste, qué partes te explicó y qué entendiste de ellas.
+**Qué aprendí.** Aprendí a pasar de un caso de estudio a un diseño en UML y de ahí a
+código. Lo que más me quedó claro es la diferencia entre agregación y composición según
+el ciclo de vida: los veterinarios existen fuera de la clínica y por eso se agregan ya
+creados, mientras que los consultorios y el historial clínico nacen y desaparecen con su
+contenedor, así que se crean dentro de él. También entendí por qué `Persona` y `Mascota`
+son abstractas, y cómo el polimorfismo me permite recorrer una `List<Mascota>` o una
+`List<Facturable>` sin usar `instanceof`.
+
+**Lo más difícil.** Git. Subí por error la carpeta `.idea` al repositorio y tuve que
+quitarla del seguimiento con `git rm --cached`, y me costó entender el flujo de ramas
+y merges. También fue difícil decidir dónde validar cada regla de negocio: las que solo
+dependen de una cita viven en `Cita`, y las que necesitan ver todas las citas viven en
+`Clinica`.
+
+**Qué mejoraría.** Guardar los datos en archivos para que no se pierdan al cerrar el
+programa, evitar generar dos comprobantes de la misma cita, impedir agendar citas en
+fechas pasadas y agregar al menú una opción que use a la `Recepcionista`, porque la clase
+existe pero hoy el menú no la utiliza.
+
+**Cómo usé la IA.** Usé Claude como guía paso a paso durante todo el proyecto. Me ayudó
+a organizar el flujo de trabajo con Git (ramas, merges, `.gitignore`, tag), a explicarme
+conceptos. También me ayudo mucho a redactar los archivos .md para que se viera bonito y presentable.
 
 ## Autor
 
