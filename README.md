@@ -143,9 +143,7 @@ Al iniciar, elige la opción **11** para cargar el escenario de demostración.
 
 ## Ejemplo de uso
 
-El escenario completo, con todas sus salidas, está en
-[docs/ejemplo-ejecucion.md](docs/ejemplo-ejecucion.md). Las capturas están en
-[docs/capturas/](docs/capturas/).
+El escenario completo, con todas sus salidas, está en[docs/capturas/capturas.md](docs/capturas/capturas.md).
 
 Fragmento de la carga del escenario (opción 11), que registra dueños, mascotas y
 veterinarios, agenda tres citas, muestra una regla de negocio violada y atiende dos citas:
